@@ -1,0 +1,26 @@
+# Dependências
+node_modules
+
+# Build
+dist
+build
+
+# Cache
+.cache
+
+# Logs
+*.log
+
+# Outros
+.env
+.env.local
+.env.production
+coverage
+*.lock
+package-lock.json
+*.json
+*.svg
+*.png
+*.jpg
+*.jpeg
+README.md
