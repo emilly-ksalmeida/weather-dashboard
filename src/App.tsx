@@ -1,4 +1,4 @@
-import { CountryPicker } from "./components/CountryPicker";
+import LocationPicker from "./components/locationPicker/LocationPicker";
 import "./index.css";
 
 function App() {
@@ -6,11 +6,7 @@ function App() {
     <>
       <h1>Clima</h1>
       <p>Procure uma cidade ou selecione pelo mapa:</p>
-      <div>
-        <input type="text" name="" id="" placeholder="Cidade" />
-        <input type="text" name="" id="" placeholder="Estado Brasileiro" />
-        <CountryPicker />
-      </div>
+      <LocationPicker />
     </>
   );
 }
