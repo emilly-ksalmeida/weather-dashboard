@@ -14,9 +14,8 @@ import {
 } from "@/components/ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
-countries.registerLocale(ptLocale); // Registra o idioma português
+countries.registerLocale(ptLocale);
 
-// Lista de países: { label: "Brasil", value: "BR" }
 const countriesList = Object.entries(countries.getNames("pt", { select: "official" })).map(
   ([code, name]) => ({
     label: name,
@@ -26,17 +25,11 @@ const countriesList = Object.entries(countries.getNames("pt", { select: "officia
 
 export function CountryPicker() {
   const [open, setOpen] = useState(false);
-  const [selectedCode, setSelectedCode] = useState(""); // Código ISO-3166-1 alfa2
+  const [selectedCode, setSelectedCode] = useState("");
   const [inputValue, setInputValue] = useState("");
-
-  // Encontra se o que foi digitado coincide exatamente com o nome de um país da lista countriesList:
-  // OBS: O método find() retorna o valor do 1° elemento do array que satisfizer a função de teste.
   const exactMatch = countriesList.find(
     item => item.label.toLowerCase() === inputValue.toLowerCase()
   );
-
-  // Filtra o resto da lista para não duplicar o que já está no topo
-  // OBS: O método filter() cria um novo array com todos os elementos do array inicial que passaram (retornou true) no teste implementado pela função fornecida.
   const otherCountries = countriesList.filter(
     item => item.label.toLowerCase() !== inputValue.toLowerCase()
   );
@@ -56,7 +49,6 @@ export function CountryPicker() {
             <CommandList>
               <CommandEmpty>Nenhum país encontrado.</CommandEmpty>
 
-              {/* Se houver match exato, ele aparece nesta seção fixa no topo */}
               {exactMatch && (
                 <CommandGroup heading="Resultado Exato">
                   <CommandItem
@@ -102,7 +94,6 @@ export function CountryPicker() {
         </PopoverContent>
       </Popover>
 
-      {/* Apenas para demonstrar que o sistema armazena o código */}
       <p className="text-sm text-muted-foreground">
         Código selecionado: <strong>{selectedCode}</strong>
       </p>
