@@ -34,6 +34,8 @@ import {
 } from "@/components/ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Separator } from "@/components/ui/separator";
+import LocationPickerSchema from "../../schemas/localizationSchema.ts";
+import locationsBR from "../../assets/listStates.ts";
 
 countries.registerLocale(ptLocale);
 
@@ -44,46 +46,10 @@ const countriesList = Object.entries(countries.getNames("pt", { select: "officia
   })
 );
 
-const locationsBR = [
-  "Acre",
-  "Alagoas",
-  "Amapá",
-  "Amazonas",
-  "Bahia",
-  "Ceará",
-  "Distrito Federal",
-  "Espírito Santo",
-  "Goiás",
-  "Maranhão",
-  "Mato Grosso",
-  "Mato Grosso do Sul",
-  "Minas Gerais",
-  "Pará",
-  "Paraíba",
-  "Paraná",
-  "Pernambuco",
-  "Piauí",
-  "Rio de Janeiro",
-  "Rio Grande do Norte",
-  "Rio Grande do Sul",
-  "Rondônia",
-  "Roraima",
-  "Santa Catarina",
-  "São Paulo",
-  "Sergipe",
-  "Tocantins",
-];
-
 type Props = {
   location: string;
   setLocation: Dispatch<SetStateAction<string>>;
 };
-
-const LocationPickerSchema = z.object({
-  cityName: z.string(),
-  state: z.string().optional(),
-  country: z.string(),
-});
 
 type LocationPicker = z.infer<typeof LocationPickerSchema>;
 
