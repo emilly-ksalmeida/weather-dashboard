@@ -116,20 +116,25 @@ export default function LocationPicker({ location, setLocation }: Props) {
 
   return (
     <>
-      <form id="form-location-picker" onSubmit={handleSubmit(search)}>
-        <FieldGroup>
+      <form
+        id="form-location-picker"
+        className="bg-sky-200 flex px-4 py-8"
+        onSubmit={handleSubmit(search)}
+      >
+        <FieldGroup className="md:flex-row">
           <Controller
             name="cityName"
             control={control}
             render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid}>
                 <FieldLabel htmlFor="search-city-name">Cidade:</FieldLabel>
+                <FieldDescription>Digite o nome de uma cidade</FieldDescription>
                 <Input
                   {...field}
                   id="search-city-name"
                   type="text"
                   aria-invalid={fieldState.invalid}
-                  placeholder="Digite o nome de uma cidade"
+                  placeholder="Cidade"
                   autoComplete="on"
                 />
                 {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
@@ -139,11 +144,12 @@ export default function LocationPicker({ location, setLocation }: Props) {
           <Controller
             name="state"
             control={control}
+            defaultValue=""
             render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid}>
                 <FieldContent>
                   <FieldLabel htmlFor="picker-state">Escolha um estado brasileiro:</FieldLabel>
-                  <FieldDescription>Digite o nome da cidade desejada.</FieldDescription>
+                  <FieldDescription>Válido apenas para o Brasil</FieldDescription>
                   {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                 </FieldContent>
 
@@ -153,7 +159,7 @@ export default function LocationPicker({ location, setLocation }: Props) {
                     id="picker-state"
                     aria-invalid={fieldState.invalid}
                   >
-                    <SelectValue placeholder="Escolha a cidade" />
+                    <SelectValue placeholder="Escolha um estado brasileiro" />
                   </SelectTrigger>
                   <SelectContent className="z-1001">
                     {locationsBR.map(city => (
@@ -172,7 +178,7 @@ export default function LocationPicker({ location, setLocation }: Props) {
             render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid}>
                 <FieldLabel htmlFor="search-country-name">País:</FieldLabel>
-
+                <FieldDescription>Nomes dos país em português</FieldDescription>
                 <Popover open={open} onOpenChange={setOpen}>
                   <PopoverTrigger asChild>
                     <Button variant="outline" role="combobox" className="w-75 justify-between">
@@ -241,7 +247,7 @@ export default function LocationPicker({ location, setLocation }: Props) {
           />
         </FieldGroup>
       </form>
-      <Field orientation="horizontal" className="pt-8">
+      <Field orientation="horizontal" className="pt-2">
         <Button type="button" variant="outline" onClick={() => reset()}>
           Reiniciar
         </Button>
