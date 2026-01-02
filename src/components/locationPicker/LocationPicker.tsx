@@ -1,4 +1,4 @@
-"use client";
+import type { SetStateAction, Dispatch } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -23,6 +23,7 @@ import { useState } from "react";
 import ptLocale from "i18n-iso-countries/langs/pt.json";
 import countries from "i18n-iso-countries";
 import { LuChevronsUpDown, LuCheck } from "react-icons/lu";
+import { FaSearchLocation } from "react-icons/fa";
 import { cn } from "@/lib/utils";
 import {
   Command,
@@ -35,6 +36,7 @@ import {
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Separator } from "@/components/ui/separator";
 import LocationPickerSchema from "../../schemas/localizationSchema.ts";
+import type { Location } from "../../utils/types.ts";
 import locationsBR from "../../assets/listStates.ts";
 
 countries.registerLocale(ptLocale);
@@ -47,11 +49,11 @@ const countriesList = Object.entries(countries.getNames("pt", { select: "officia
 );
 
 type Props = {
-  location: string;
-  setLocation: Dispatch<SetStateAction<string>>;
+  location: Location;
+  setLocation: Dispatch<SetStateAction<Location>>;
 };
 
-type LocationPicker = z.infer<typeof LocationPickerSchema>;
+type LocationPickerSearch = z.infer<typeof LocationPickerSchema>;
 
 export default function LocationPicker({ location, setLocation }: Props) {
   const {
@@ -60,7 +62,7 @@ export default function LocationPicker({ location, setLocation }: Props) {
     setValue,
     formState: { errors },
     reset,
-  } = useForm<LocationPicker>({
+  } = useForm<LocationPickerSearch>({
     resolver: zodResolver(LocationPickerSchema),
     mode: "onChange",
   });
@@ -75,9 +77,9 @@ export default function LocationPicker({ location, setLocation }: Props) {
     item => item.label.toLowerCase() !== inputValue.toLowerCase()
   );
 
-  function search(data: LocationPicker) {
+  function search(data: LocationPickerSearch) {
     console.log(data);
-    setLocation(data.cityName);
+    setLocation(data);
   }
 
   return (
@@ -219,6 +221,7 @@ export default function LocationPicker({ location, setLocation }: Props) {
         </Button>
         <Button type="submit" form="form-location-picker">
           Pesquisar
+          <FaSearchLocation />
         </Button>
       </Field>
       <Separator className="my-4" />
