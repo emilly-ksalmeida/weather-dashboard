@@ -50,7 +50,7 @@ export async function getGeocoding(locationSearch: Location): Promise<Geocoding[
           country: citySeleted.country,
         };
         return city;
-      });
+      })[0];
   } else {
     dataGeo = data.results.map((result: FetchGeocoding) => {
       const city = {
