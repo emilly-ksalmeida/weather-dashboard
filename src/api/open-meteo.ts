@@ -1,5 +1,5 @@
 import { format, addDays, parseISO } from "date-fns";
-import { weatherForecastByCoordsSchema } from "../schemas/weatherForecastSchema.ts";
+//import { weatherForecastByCoordsSchema } from "../schemas/weatherForecastSchema.ts";
 import type { Geocoding, Location, FetchGeocoding } from "../utils/types.ts";
 import type { WeatherForecast } from "../schemas/weatherForecastSchema.ts";
 
@@ -21,7 +21,7 @@ function getDaysRange(): {
   };
 }
 
-export async function getGeocoding(locationSearch: Location): Promise<Geocoding[]> {
+export async function getGeocoding(locationSearch: Location): Promise<Geocoding> {
   const cityName = locationSearch.cityName;
   const countryCode = locationSearch.country;
   const stateSearch = locationSearch.state;
@@ -67,6 +67,7 @@ export async function getGeocoding(locationSearch: Location): Promise<Geocoding[
   if (dataGeo.length === 0) {
     throw new Error("Cidade não encontrada no brasil!");
   }
+  console.log(dataGeo);
   return dataGeo;
 }
 
@@ -75,7 +76,7 @@ export async function getWeatherForecastByCoords(
 ): Promise<WeatherForecast> {
   const { latitude, longitude, country, name, state } = dataGeocoding;
   const { nowDate, endDate } = getDaysRange();
-  const url = `api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&daily=weather_code,temperature_2m_max,temperature_2m_min,temperature_2m_mean,precipitation_sum&hourly=temperature_2m,precipitation,weather_code&current=temperature_2m,relative_humidity_2m,is_day,precipitation,weather_code,wind_speed_10m&timezone=auto&start_date=${nowDate}&end_date=${endDate}`;
+  const url = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&daily=weather_code,temperature_2m_max,temperature_2m_min,temperature_2m_mean,precipitation_sum&hourly=temperature_2m,precipitation,weather_code&current=temperature_2m,relative_humidity_2m,is_day,precipitation,weather_code,wind_speed_10m&timezone=auto&start_date=${nowDate}&end_date=${endDate}`;
 
   const resDataForecast = await fetch(url);
   const resDataForecastJSON = await resDataForecast.json();
@@ -109,6 +110,8 @@ export async function getWeatherForecastByCoords(
       name: name,
       state: state,
       country: country,
+      lat: resDataForecastJSON.latitude,
+      long: resDataForecastJSON.longitude,
     },
   };
 
