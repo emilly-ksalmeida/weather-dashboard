@@ -1,42 +1,40 @@
 import { useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
 import { MapContainer, Marker, useMap } from "react-leaflet";
 import { MaptilerLayer } from "@maptiler/leaflet-maptilersdk";
 import "leaflet/dist/leaflet.css";
-import { getWeatherForecastByCoords } from "../../api/open-meteo.ts";
 import type { Geocoding } from "../../utils/types.ts";
 
 type Props = {
-  dataForecast: Geocoding;
+  geocodingResult: Geocoding;
   onMapClick: (latitude: number, longitude: number) => void;
 };
 
-export default function InteractiveMap({ dataForecast, onMapClick }: Props) {
-
+export default function InteractiveMap({ geocodingResult, onMapClick }: Props) {
   return (
     <MapContainer
-      key={`${dataForecast.latitude},${dataForecast.longitude}`}
-      center={[dataForecast.latitude, dataForecast.longitude]}
+      key={`${geocodingResult.latitude},${geocodingResult.longitude}`}
+      center={[geocodingResult.latitude, geocodingResult.longitude]}
       zoom={12}
       style={{ width: "500px", height: "400px" }}
     >
-      <MapClick onMapClick={onMapClick} dataForecast={dataForecast} />
+      <MapClick onMapClick={onMapClick} geocodingResult={geocodingResult} />
       <MapStyle />
-      <Marker position={[dataForecast.latitude, dataForecast.longitude]} />
+      <Marker position={[geocodingResult.latitude, geocodingResult.longitude]} />
     </MapContainer>
   );
 }
 
 function MapClick({
   onMapClick,
-  dataForecast,
+  geocodingResult,
 }: {
   onMapClick: (latitude: number, longitude: number) => void;
-  dataForecast: Geocoding;
+  geocodingResult: Geocoding;
 }) {
   const map = useMap();
-  map.panTo([dataForecast.latitude, dataForecast.longitude]);
+  map.panTo([geocodingResult.latitude, geocodingResult.longitude]);
   map.on("click", e => {
+    console.log(e);
     const { lat: eventLat, lng: eventLng } = e.latlng;
     onMapClick(eventLat, eventLng);
   });
