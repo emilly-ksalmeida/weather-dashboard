@@ -23,7 +23,6 @@ const dailySchema = z.object({
   maxTemperature: z.array(z.number()),
   minTemperature: z.array(z.number()),
   meanTemperature: z.array(z.number()),
-  precipitation: z.array(z.number()),
 });
 
 const cityDataGeoShema = z.object({
@@ -42,4 +41,17 @@ export const weatherForecastByCoordsSchema = z.object({
   cityDataGeo: cityDataGeoShema,
 });
 
+const AirQualityCurrentSchema = z.object({
+  time: z.string(),
+  usAQI: z.number(),
+  pm10: z.number(),
+  pm25: z.number(),
+});
+
+export const AirQualityForecastSchema = z.object({
+  current: AirQualityCurrentSchema,
+});
+
 export type WeatherForecast = z.infer<typeof weatherForecastByCoordsSchema>;
+
+export type AirQualityForecast = z.infer<typeof AirQualityForecastSchema>;
