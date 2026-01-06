@@ -62,7 +62,7 @@ export async function getGeocoding(locationSearch: Location): Promise<Geocoding>
         country: result.country,
       };
       return city;
-    });
+    })[0];
   }
   if (dataGeo.length === 0) {
     throw new Error("Cidade não encontrada no brasil!");
