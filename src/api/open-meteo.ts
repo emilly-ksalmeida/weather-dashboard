@@ -1,5 +1,6 @@
 import { format, addDays, parseISO } from "date-fns";
-//import { weatherForecastByCoordsSchema } from "../schemas/weatherForecastSchema.ts";
+import { weatherForecastByCoordsSchema } from "../schemas/weatherForecastSchema.ts";
+import { GeocodingSchema } from "../schemas/localizationSchema.ts";
 import type { Geocoding, Location, FetchGeocoding } from "../utils/types.ts";
 import type { WeatherForecast } from "../schemas/weatherForecastSchema.ts";
 
@@ -67,8 +68,7 @@ export async function getGeocoding(locationSearch: Location): Promise<Geocoding>
   if (dataGeo.length === 0) {
     throw new Error("Cidade não encontrada no brasil!");
   }
-  console.log(dataGeo);
-  return dataGeo;
+  return GeocodingSchema.parse(dataGeo);
 }
 
 export async function getWeatherForecastByCoords(
@@ -115,6 +115,5 @@ export async function getWeatherForecastByCoords(
     },
   };
 
-  // return weatherForecastByCoordsSchema.parse(weatherForecastByCoords);
-  return weatherForecastByCoords;
+  return weatherForecastByCoordsSchema.parse(weatherForecastByCoords);
 }

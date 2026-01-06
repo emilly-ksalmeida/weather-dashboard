@@ -36,7 +36,7 @@ import {
 } from "@/components/ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Separator } from "@/components/ui/separator";
-import LocationPickerSchema from "../../schemas/localizationSchema.ts";
+import { LocationPickerSchema } from "../../schemas/localizationSchema.ts";
 import locationsBR from "../../assets/listStates.ts";
 
 countries.registerLocale(ptLocale);
@@ -76,7 +76,6 @@ export default function LocationPicker() {
   );
 
   function search(data: LocationPickerSearch) {
-    console.log(data);
     setLocation(data);
   }
 
