@@ -3,21 +3,21 @@ import { getWeatherForecastByCoords } from "../../api/open-meteo.ts";
 import { useQuery } from "@tanstack/react-query";
 
 type Props = {
-  geocodingResult: Geocoding;
+  geocodingResults: Geocoding;
 };
-export default function Card({ dataForecast }: Props) {
+export default function Card({ geocodingResults }: Props) {
   const { data, isError, error } = useQuery({
-    queryKey: ["cityCoords", dataForecast],
-    queryFn: () => getWeatherForecastByCoords(dataForecast),
-    enabled: !!dataForecast,
+    queryKey: ["cityCoords", geocodingResults],
+    queryFn: () => getWeatherForecastByCoords(geocodingResults),
+    enabled: !!geocodingResults,
   });
-  
+
   if (!data) return <p>Informe uma cidade clicando no mapa</p>;
   if (isError) return <p>Erro: {error.message}</p>;
 
   return (
-    <div>
-      <p>Dados da função getweather</p>
+    <div className="bg-yellow-300">
+      <p>Dados da função getweatherforecast</p>
       <pre>{JSON.stringify(data, null, 2)}</pre>
     </div>
   );

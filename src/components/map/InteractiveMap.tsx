@@ -1,38 +1,40 @@
-import { useEffect } from "react";
+import { useEffect, useContext } from "react";
 import { MapContainer, Marker, useMap } from "react-leaflet";
 import { MaptilerLayer } from "@maptiler/leaflet-maptilersdk";
 import "leaflet/dist/leaflet.css";
+import ContextData from "../context/ContextData.ts";
 import type { Geocoding } from "../../utils/types.ts";
 
 type Props = {
-  geocodingResult: Geocoding;
-  onMapClick: (latitude: number, longitude: number) => void;
+  geocodingResults: Geocoding;
 };
 
-export default function InteractiveMap({ geocodingResult, onMapClick }: Props) {
+export default function InteractiveMap({ geocodingResults }: Props) {
+  const context = useContext(ContextData);
+  const { onMapClick } = context;
   return (
     <MapContainer
-      key={`${geocodingResult.latitude},${geocodingResult.longitude}`}
-      center={[geocodingResult.latitude, geocodingResult.longitude]}
+      key={`${geocodingResults.latitude},${geocodingResults.longitude}`}
+      center={[geocodingResults.latitude, geocodingResults.longitude]}
       zoom={12}
       style={{ width: "500px", height: "400px" }}
     >
-      <MapClick onMapClick={onMapClick} geocodingResult={geocodingResult} />
+      <MapClick onMapClick={onMapClick} geocodingResults={geocodingResults} />
       <MapStyle />
-      <Marker position={[geocodingResult.latitude, geocodingResult.longitude]} />
+      <Marker position={[geocodingResults.latitude, geocodingResults.longitude]} />
     </MapContainer>
   );
 }
 
 function MapClick({
   onMapClick,
-  geocodingResult,
+  geocodingResults,
 }: {
   onMapClick: (latitude: number, longitude: number) => void;
-  geocodingResult: Geocoding;
+  geocodingResults: Geocoding;
 }) {
   const map = useMap();
-  map.panTo([geocodingResult.latitude, geocodingResult.longitude]);
+  map.panTo([geocodingResults.latitude, geocodingResults.longitude]);
   map.on("click", e => {
     console.log(e);
     const { lat: eventLat, lng: eventLng } = e.latlng;
