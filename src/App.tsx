@@ -4,6 +4,7 @@ import ContextData from "./components/context/ContextData.ts";
 import LocationPicker from "./components/locationPicker/LocationPicker.tsx";
 import InteractiveMap from "./components/map/InteractiveMap.tsx";
 import Card from "./components/card/Card.tsx";
+import AirQuality from "./components/airQuality/AirQuality.tsx";
 import "./index.css";
 import { getGeocoding } from "./api/open-meteo.ts";
 
@@ -42,7 +43,10 @@ function App() {
       <InteractiveMap geocodingResults={geocodingResults} />
 
       <pre>Resultado da função getGeocoding: {JSON.stringify(geocodingResults, null, 2)}</pre>
+
       <Card geocodingResults={geocodingResults} />
+
+      <AirQuality geocodingResults={geocodingResults} />
     </div>
   );
 }
