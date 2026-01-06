@@ -31,6 +31,8 @@ const cityDataGeoShema = z.object({
   name: z.string(),
   state: z.string(),
   country: z.string(),
+  lat: z.number(),
+  long: z.number(),
 });
 
 export const weatherForecastByCoordsSchema = z.object({

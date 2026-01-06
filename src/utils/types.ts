@@ -21,18 +21,18 @@ export interface ApiResponseGeocoding {
   generationtime_ms: number;
 }
 
-export interface Geocoding {
+export type Geocoding = {
   name: string;
   latitude: number;
   longitude: number;
   timeZone: string;
   state: string;
   country: string;
-}
+};
 
 export type Coords = {
-  lat: number;
-  lon: number;
+  latitude: number;
+  longitude: number;
 };
 
 export type Location = {

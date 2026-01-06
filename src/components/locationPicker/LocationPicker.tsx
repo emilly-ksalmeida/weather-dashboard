@@ -1,7 +1,8 @@
-import type { SetStateAction, Dispatch } from "react";
+import { useContext } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
+import ContextData from "../context/ContextData.ts";
 import {
   Field,
   FieldContent,
@@ -35,8 +36,7 @@ import {
 } from "@/components/ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Separator } from "@/components/ui/separator";
-import LocationPickerSchema from "../../schemas/localizationSchema.ts";
-import type { Location } from "../../utils/types.ts";
+import { LocationPickerSchema } from "../../schemas/localizationSchema.ts";
 import locationsBR from "../../assets/listStates.ts";
 
 countries.registerLocale(ptLocale);
@@ -48,14 +48,12 @@ const countriesList = Object.entries(countries.getNames("pt", { select: "officia
   })
 );
 
-type Props = {
-  location: Location;
-  setLocation: Dispatch<SetStateAction<Location>>;
-};
-
 type LocationPickerSearch = z.infer<typeof LocationPickerSchema>;
 
-export default function LocationPicker({ location, setLocation }: Props) {
+export default function LocationPicker() {
+  const context = useContext(ContextData);
+  const { setLocation } = context;
+
   const {
     control,
     handleSubmit,
@@ -78,7 +76,6 @@ export default function LocationPicker({ location, setLocation }: Props) {
   );
 
   function search(data: LocationPickerSearch) {
-    console.log(data);
     setLocation(data);
   }
 
