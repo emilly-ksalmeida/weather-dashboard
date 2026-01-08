@@ -1,10 +1,11 @@
-import { useContext } from "react";
+import { Suspense, useContext } from "react";
 import { skipToken, useQuery } from "@tanstack/react-query";
 import ContextData from "./components/context/ContextData.ts";
 import { Separator } from "@/components/ui/separator";
 import LocationPicker from "./components/locationPicker/LocationPicker.tsx";
 import InteractiveMap from "./components/map/InteractiveMap.tsx";
 import ForecastCards from "./components/forecastCards/ForecastCards.tsx";
+import InteractiveMapSkeleton from "./components/skeletons/InteractiveMapSkeleton.tsx";
 import { getGeocoding } from "./api/open-meteo.ts";
 
 function App() {
@@ -30,7 +31,6 @@ function App() {
           state: data?.state ?? "teste",
           country: data?.country ?? "teste",
         };
-  if (isLoading) return <p>Carregando</p>;
   if (isError) return <p>Erro: {error.message}</p>;
 
   return (
@@ -39,7 +39,9 @@ function App() {
       <p>Procure uma cidade abaixo ou selecione pelo mapa:</p>
       <div className="flex flex-wrap justify-center gap-10">
         <LocationPicker />
-        <InteractiveMap geocodingResults={geocodingResults} />
+        <Suspense fallback={<InteractiveMapSkeleton />}>
+          <InteractiveMap geocodingResults={geocodingResults} />
+        </Suspense>
       </div>
 
       <Separator className="my-2" />

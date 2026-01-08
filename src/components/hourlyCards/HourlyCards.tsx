@@ -3,6 +3,7 @@ import type { WeatherForecast } from "@/schemas/weatherForecastSchema";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { formatDateTime } from "@/utils/dateFormatter";
 import { weatherEmojiUnicode } from "@/utils/weatherIcons";
+import { WiRaindrop } from "react-icons/wi";
 
 type Props = {
   Forecast: WeatherForecast;
@@ -25,7 +26,10 @@ export default function HourlyCards({ Forecast }: Props) {
                   : ""}
               </p>
               <p className="text-3xl">{Forecast.hourly.temperature[index]} °C</p>
-              <p>{Forecast.hourly.precipitation[index]} mm</p>
+              <div className="flex flex-row gap-1 items-center">
+                <WiRaindrop />
+                <p>{Forecast.hourly.precipitation[index]} mm</p>
+              </div>
             </CardContent>
           </Card>
         ))}

@@ -146,6 +146,6 @@ export async function getAirQualityByCoords(coords: Coords): Promise<AirQualityF
       pm25: resDataAirCityJson.current.pm2_5,
     },
   };
-console.log(airQualityForecast)
+
   return AirQualityForecastSchema.parse(airQualityForecast);
 }
