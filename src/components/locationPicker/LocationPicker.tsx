@@ -35,7 +35,6 @@ import {
   CommandList,
 } from "@/components/ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Separator } from "@/components/ui/separator";
 import { LocationPickerSchema } from "../../schemas/localizationSchema.ts";
 import locationsBR from "../../assets/listStates.ts";
 
@@ -80,13 +79,9 @@ export default function LocationPicker() {
   }
 
   return (
-    <>
-      <form
-        id="form-location-picker"
-        className="bg-sky-200 flex px-4 py-8"
-        onSubmit={handleSubmit(search)}
-      >
-        <FieldGroup className="md:flex-row">
+    <div className="flex flex-col justify-center items-center">
+      <form id="form-location-picker" className="px-4 py-8 w-78" onSubmit={handleSubmit(search)}>
+        <FieldGroup>
           <Controller
             name="cityName"
             control={control}
@@ -212,7 +207,7 @@ export default function LocationPicker() {
           />
         </FieldGroup>
       </form>
-      <Field orientation="horizontal" className="pt-2">
+      <Field orientation="horizontal" className="flex flex-row justify-center">
         <Button type="button" variant="outline" onClick={() => reset()}>
           Reiniciar
         </Button>
@@ -221,7 +216,6 @@ export default function LocationPicker() {
           <FaSearchLocation />
         </Button>
       </Field>
-      <Separator className="my-4" />
-    </>
+    </div>
   );
 }

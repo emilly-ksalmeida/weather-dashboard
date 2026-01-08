@@ -1,11 +1,10 @@
 import { useContext } from "react";
 import { skipToken, useQuery } from "@tanstack/react-query";
 import ContextData from "./components/context/ContextData.ts";
+import { Separator } from "@/components/ui/separator";
 import LocationPicker from "./components/locationPicker/LocationPicker.tsx";
 import InteractiveMap from "./components/map/InteractiveMap.tsx";
-import Card from "./components/card/Card.tsx";
-import AirQuality from "./components/airQuality/AirQuality.tsx";
-import "./index.css";
+import ForecastCards from "./components/forecastCards/ForecastCards.tsx";
 import { getGeocoding } from "./api/open-meteo.ts";
 
 function App() {
@@ -35,18 +34,17 @@ function App() {
   if (isError) return <p>Erro: {error.message}</p>;
 
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col gap-2 px-10 py-12">
       <h1 className="text-3xl font-extrabold text-center p-4">Painel Climático</h1>
-      <p>Procure uma cidade ou selecione pelo mapa:</p>
-      <LocationPicker />
+      <p>Procure uma cidade abaixo ou selecione pelo mapa:</p>
+      <div className="flex flex-wrap justify-center gap-10">
+        <LocationPicker />
+        <InteractiveMap geocodingResults={geocodingResults} />
+      </div>
 
-      <InteractiveMap geocodingResults={geocodingResults} />
+      <Separator className="my-2" />
 
-      <pre>Resultado da função getGeocoding: {JSON.stringify(geocodingResults, null, 2)}</pre>
-
-      <Card geocodingResults={geocodingResults} />
-
-      <AirQuality geocodingResults={geocodingResults} />
+      <ForecastCards geocodingResults={geocodingResults} />
     </div>
   );
 }

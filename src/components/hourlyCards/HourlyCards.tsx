@@ -1,0 +1,36 @@
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import type { WeatherForecast } from "@/schemas/weatherForecastSchema";
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import { formatDateTime } from "@/utils/dateFormatter";
+import { weatherEmojiUnicode } from "@/utils/weatherIcons";
+
+type Props = {
+  Forecast: WeatherForecast;
+};
+
+export default function HourlyCards({ Forecast }: Props) {
+  return (
+    <ScrollArea className="w-full max-w-210 rounded-md border">
+      <h2>Previsão do tempo por hora:</h2>
+      <div className="flex gap-2 p-4 w-max">
+        {Forecast.hourly.hourlyTime.map((day, index) => (
+          <Card className="w-46 shrink-0" key={day}>
+            <CardHeader>
+              <CardTitle>{formatDateTime(day)}</CardTitle>
+            </CardHeader>
+            <CardContent className="flex flex-col gap-4 justify-center items-center">
+              <p className="text-3xl">
+                {Forecast.current.weatherCode !== null
+                  ? weatherEmojiUnicode[Forecast.hourly.weatherCode[index]]
+                  : ""}
+              </p>
+              <p className="text-3xl">{Forecast.hourly.temperature[index]} °C</p>
+              <p>{Forecast.hourly.precipitation[index]} mm</p>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+      <ScrollBar orientation="horizontal" />
+    </ScrollArea>
+  );
+}
