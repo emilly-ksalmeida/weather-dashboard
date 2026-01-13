@@ -86,26 +86,38 @@ export async function getWeatherForecastByCoords(
   const weatherForecastByCoords = {
     current: {
       currentTime: resDataForecastJSON.current.time,
-      temperature: resDataForecastJSON.current.temperature_2m,
+      temperature: Math.round(resDataForecastJSON.current.temperature_2m),
       relativeHumidity: resDataForecastJSON.current.relative_humidity_2m,
       isDay: resDataForecastJSON.current.is_day,
-      precipitation: resDataForecastJSON.current.precipitation,
+      precipitation: Number(resDataForecastJSON.current.precipitation.toFixed(1)),
       weatherCode: resDataForecastJSON.current.weather_code,
-      windSpeed: resDataForecastJSON.current.wind_speed_10m,
+      windSpeed: Math.round(resDataForecastJSON.current.wind_speed_10m),
     },
     hourly: {
-      hourlyTime: resDataForecastJSON.hourly.time,
-      temperature: resDataForecastJSON.hourly.temperature_2m,
-      precipitation: resDataForecastJSON.hourly.precipitation,
-      weatherCode: resDataForecastJSON.hourly.weather_code,
+      hourlyTime: resDataForecastJSON.hourly.time.slice(0, 24),
+      temperature: resDataForecastJSON.hourly.temperature_2m
+        .slice(0, 24)
+        .map((t: number) => Math.round(t)),
+      precipitation: resDataForecastJSON.hourly.precipitation
+        .slice(0, 24)
+        .map((p: number) => Number(p.toFixed(1))),
+      weatherCode: resDataForecastJSON.hourly.weather_code.slice(0, 24),
     },
     daily: {
       dailyTime: resDataForecastJSON.daily.time,
       weatherCode: resDataForecastJSON.daily.weather_code,
-      maxTemperature: resDataForecastJSON.daily.temperature_2m_max,
-      minTemperature: resDataForecastJSON.daily.temperature_2m_min,
-      meanTemperature: resDataForecastJSON.daily.temperature_2m_mean,
-      precipitation: resDataForecastJSON.daily.precipitation,
+      maxTemperature: resDataForecastJSON.daily.temperature_2m_max.map((t: number) =>
+        Math.round(t)
+      ),
+      minTemperature: resDataForecastJSON.daily.temperature_2m_min.map((t: number) =>
+        Math.round(t)
+      ),
+      meanTemperature: resDataForecastJSON.daily.temperature_2m_mean.map((t: number) =>
+        Math.round(t)
+      ),
+      precipitation: resDataForecastJSON.daily.precipitation_sum.map((p: number) => {
+        return Number(p.toFixed(1));
+      }),
     },
     cityDataGeo: {
       timezone: resDataForecastJSON.timezone,
@@ -116,9 +128,7 @@ export async function getWeatherForecastByCoords(
       long: resDataForecastJSON.longitude,
     },
   };
-
   return weatherForecastByCoordsSchema.parse(weatherForecastByCoords);
-  //return weatherForecastByCoords;
 }
 
 export async function getAirQualityByCoords(coords: Coords): Promise<AirQualityForecast> {
