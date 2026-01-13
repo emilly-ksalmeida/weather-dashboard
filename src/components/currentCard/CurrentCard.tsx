@@ -1,14 +1,24 @@
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { weatherEmojiUnicode } from "../../utils/weatherIcons.ts";
 import { formatDateTime } from "../../utils/dateFormatter.ts";
 import { WiStrongWind, WiRaindrop, WiHumidity, WiThermometer } from "react-icons/wi";
-import type { WeatherForecast } from "@/schemas/weatherForecastSchema";
+import { getWeatherForecastByCoords } from "@/api/open-meteo.ts";
 
 type Props = {
-  Forecast: WeatherForecast;
+  geocodingResults: Geocoding;
 };
 
-export default function CurrentCard({ Forecast }: Props) {
+export default function CurrentCard({ geocodingResults }: Props) {
+  const {
+    data: Forecast,
+    isError,
+    error,
+  } = useSuspenseQuery({
+    queryKey: ["cityCoords", geocodingResults],
+    queryFn: () => getWeatherForecastByCoords(geocodingResults),
+  });
+  if (isError) return <p>Erro: {error.message}</p>;
   return (
     <Card className="w-74">
       <CardHeader>

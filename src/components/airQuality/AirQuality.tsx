@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { skipToken, useQuery } from "@tanstack/react-query";
 import AirQualitySkeleton from "../skeletons/AirQualitySkeleton.tsx";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getAirQualityByCoords } from "../../api/open-meteo.ts";
@@ -15,11 +15,14 @@ export default function AirQuality({ geocodingResults }: Props) {
     error,
   } = useQuery({
     queryKey: ["airQuality", geocodingResults.latitude, geocodingResults.longitude],
-    queryFn: () =>
-      getAirQualityByCoords({
-        latitude: geocodingResults.latitude,
-        longitude: geocodingResults.longitude,
-      }),
+    queryFn:
+      geocodingResults.name === "teste"
+        ? skipToken
+        : () =>
+            getAirQualityByCoords({
+              latitude: geocodingResults.latitude,
+              longitude: geocodingResults.longitude,
+            }),
     enabled: !!geocodingResults,
   });
 

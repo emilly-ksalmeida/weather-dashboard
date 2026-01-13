@@ -12,7 +12,7 @@ function App() {
   const context = useContext(ContextData);
   const { location, coordinates } = context;
 
-  const { data, isLoading, isError, error } = useQuery({
+  const { data, isError, error } = useQuery({
     queryKey: ["geocodingLocation", location],
     queryFn:
       location.cityName === "Customizado" || location.cityName === ""

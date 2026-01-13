@@ -1,3 +1,4 @@
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Carousel,
@@ -6,16 +7,26 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import type { WeatherForecast } from "@/schemas/weatherForecastSchema";
 import { formatDate } from "@/utils/dateFormatter";
 import { weatherEmojiUnicode } from "@/utils/weatherIcons";
 import { WiThermometer } from "react-icons/wi";
 import { IoIosArrowRoundDown, IoIosArrowRoundUp } from "react-icons/io";
+import { getWeatherForecastByCoords } from "@/api/open-meteo";
 
 type Props = {
-  Forecast: WeatherForecast;
+  geocodingResults: Geocoding;
 };
-export default function DailyCard({ Forecast }: Props) {
+
+export default function DailyCard({ geocodingResults }: Props) {
+  const {
+    data: Forecast,
+    isError,
+    error,
+  } = useSuspenseQuery({
+    queryKey: ["cityCoords", geocodingResults],
+    queryFn: () => getWeatherForecastByCoords(geocodingResults),
+  });
+  if (isError) return <p>Erro: {error.message}</p>;
   return (
     <div className="flex justify-center">
       <Carousel className="w-full max-w-xs">

@@ -36,7 +36,6 @@ function MapClick({
   const map = useMap();
   map.panTo([geocodingResults.latitude, geocodingResults.longitude]);
   map.on("click", e => {
-    console.log(e);
     const { lat: eventLat, lng: eventLng } = e.latlng;
     onMapClick(eventLat, eventLng);
   });

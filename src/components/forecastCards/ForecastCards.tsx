@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { skipToken, useQuery } from "@tanstack/react-query";
 import { getWeatherForecastByCoords } from "../../api/open-meteo.ts";
 import { Separator } from "@radix-ui/react-separator";
 import CurrentCard from "../currentCard/CurrentCard.tsx";
@@ -23,18 +23,20 @@ export default function ForecastCards({ geocodingResults }: Props) {
     error,
   } = useQuery({
     queryKey: ["cityCoords", geocodingResults],
-    queryFn: () => getWeatherForecastByCoords(geocodingResults),
+    queryFn:
+      geocodingResults.name === "teste"
+        ? skipToken
+        : () => getWeatherForecastByCoords(geocodingResults),
     enabled: !!geocodingResults,
   });
 
-  if (!Forecast) return <p>Informe uma cidade clicando no mapa</p>;
   if (isError) return <p>Erro: {error.message}</p>;
 
   return (
     <div className="flex flex-col justify-center items-center">
       <div className="flex flex-wrap justify-center gap-10">
         <Suspense fallback={<CurrentCardSkeleton />}>
-          <CurrentCard Forecast={Forecast} />
+          <CurrentCard geocodingResults={geocodingResults} />
         </Suspense>
 
         <AirQuality geocodingResults={geocodingResults} />
@@ -42,12 +44,12 @@ export default function ForecastCards({ geocodingResults }: Props) {
 
       <Separator className="my-2" />
       <Suspense fallback={<HourlyCardsSkeleton />}>
-        <HourlyCards Forecast={Forecast} />
+        <HourlyCards geocodingResults={geocodingResults} />
       </Suspense>
 
       <Separator className="my-2" />
       <Suspense fallback={<DailyCardsSkeleton />}>
-        <DailyCard Forecast={Forecast} />
+        <DailyCard geocodingResults={geocodingResults} />
       </Suspense>
     </div>
   );

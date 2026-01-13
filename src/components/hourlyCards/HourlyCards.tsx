@@ -1,15 +1,25 @@
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-import type { WeatherForecast } from "@/schemas/weatherForecastSchema";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { formatDateTime } from "@/utils/dateFormatter";
 import { weatherEmojiUnicode } from "@/utils/weatherIcons";
 import { WiRaindrop } from "react-icons/wi";
+import { getWeatherForecastByCoords } from "@/api/open-meteo";
 
 type Props = {
-  Forecast: WeatherForecast;
+  geocodingResults: Geocoding;
 };
 
-export default function HourlyCards({ Forecast }: Props) {
+export default function HourlyCards({ geocodingResults }: Props) {
+  const {
+    data: Forecast,
+    isError,
+    error,
+  } = useSuspenseQuery({
+    queryKey: ["cityCoords", geocodingResults],
+    queryFn: () => getWeatherForecastByCoords(geocodingResults),
+  });
+  if (isError) return <p>Erro: {error.message}</p>;
   return (
     <ScrollArea className="w-full max-w-210 rounded-md border">
       <h2>Previsão do tempo por hora:</h2>
