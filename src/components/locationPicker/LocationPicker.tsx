@@ -1,8 +1,7 @@
-import { useContext } from "react";
+import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import ContextData from "../context/ContextData.ts";
 import {
   Field,
   FieldContent,
@@ -20,7 +19,6 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Input } from "../ui/input";
-import { useState } from "react";
 import ptLocale from "i18n-iso-countries/langs/pt.json";
 import countries from "i18n-iso-countries";
 import { LuChevronsUpDown, LuCheck } from "react-icons/lu";
@@ -37,6 +35,7 @@ import {
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { LocationPickerSchema } from "../../schemas/localizationSchema.ts";
 import locationsBR from "../../assets/listStates.ts";
+import type { Location } from "@/utils/types.ts";
 
 countries.registerLocale(ptLocale);
 
@@ -47,11 +46,18 @@ const countriesList = Object.entries(countries.getNames("pt", { select: "officia
   })
 );
 
+type Props = {
+  setLocation: React.Dispatch<React.SetStateAction<Location>>;
+};
+
 type LocationPickerSearch = z.infer<typeof LocationPickerSchema>;
 
-export default function LocationPicker() {
-  const context = useContext(ContextData);
-  const { setLocation } = context;
+export default function LocationPicker({ setLocation }: Props) {
+  const [open, setOpen] = useState(false);
+
+  const [selectedCode, setSelectedCode] = useState("");
+
+  const [inputValue, setInputValue] = useState("");
 
   const {
     control,
@@ -62,11 +68,11 @@ export default function LocationPicker() {
   } = useForm<LocationPickerSearch>({
     resolver: zodResolver(LocationPickerSchema),
     mode: "onChange",
+    defaultValues: {
+      state: "Estado",
+    },
   });
 
-  const [open, setOpen] = useState(false);
-  const [selectedCode, setSelectedCode] = useState("");
-  const [inputValue, setInputValue] = useState("");
   const exactMatch = countriesList.find(
     item => item.label.toLowerCase() === inputValue.toLowerCase()
   );
@@ -75,6 +81,7 @@ export default function LocationPicker() {
   );
 
   function search(data: LocationPickerSearch) {
+    console.log("Fazer setLocation", data);
     setLocation(data);
   }
 
@@ -104,7 +111,6 @@ export default function LocationPicker() {
           <Controller
             name="state"
             control={control}
-            defaultValue=""
             render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid}>
                 <FieldContent>

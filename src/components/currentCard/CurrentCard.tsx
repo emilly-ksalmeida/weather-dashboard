@@ -4,21 +4,28 @@ import { weatherEmojiUnicode } from "../../utils/weatherIcons.ts";
 import { formatDateTime } from "../../utils/dateFormatter.ts";
 import { WiStrongWind, WiRaindrop, WiHumidity, WiThermometer } from "react-icons/wi";
 import { getWeatherForecastByCoords } from "@/api/open-meteo.ts";
+// import { useContext } from "react";
+// import ContextData from "../context/ContextData.ts";
+import type { Geocoding } from "@/utils/types.ts";
 
 type Props = {
-  geocodingResults: Geocoding;
+  coordsSearch: Geocoding;
 };
 
-export default function CurrentCard({ geocodingResults }: Props) {
+export default function CurrentCard({ coordsSearch }: Props) {
+  // const context = useContext(ContextData);
+  // const { coordinates } = context;
   const {
     data: Forecast,
     isError,
     error,
   } = useSuspenseQuery({
-    queryKey: ["cityCoords", geocodingResults],
-    queryFn: () => getWeatherForecastByCoords(geocodingResults),
+    queryKey: ["cityCoords", coordsSearch],
+    queryFn: () => getWeatherForecastByCoords(coordsSearch),
   });
+
   if (isError) return <p>Erro: {error.message}</p>;
+
   return (
     <Card className="w-74">
       <CardHeader>

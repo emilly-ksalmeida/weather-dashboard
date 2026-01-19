@@ -1,52 +1,51 @@
-import { Suspense, useContext } from "react";
-import { skipToken, useQuery } from "@tanstack/react-query";
-import ContextData from "./components/context/ContextData.ts";
+import { useState } from "react";
 import { Separator } from "@/components/ui/separator";
 import LocationPicker from "./components/locationPicker/LocationPicker.tsx";
 import InteractiveMap from "./components/map/InteractiveMap.tsx";
 import ForecastCards from "./components/forecastCards/ForecastCards.tsx";
-import InteractiveMapSkeleton from "./components/skeletons/InteractiveMapSkeleton.tsx";
+import type { Geocoding, Location } from "@/utils/types.ts";
 import { getGeocoding } from "./api/open-meteo.ts";
+import { useQuery } from "@tanstack/react-query";
+
+const defaultGeoData: Geocoding = {
+  name: "Brasília",
+  latitude: -15.78,
+  longitude: -47.92,
+  timeZone: "--",
+  state: "Federal District",
+  country: "BR",
+};
 
 function App() {
-  const context = useContext(ContextData);
-  const { location, coordinates } = context;
-
-  const { data, isError, error } = useQuery({
-    queryKey: ["geocodingLocation", location],
-    queryFn:
-      location.cityName === "Customizado" || location.cityName === ""
-        ? skipToken
-        : () => getGeocoding(location),
-    enabled: !!location,
+  const [location, setLocation] = useState<Location>({
+    cityName: "Brasília",
+    state: "Federal District",
+    country: "BR",
   });
-  const geocodingResults =
-    location.cityName === "Customizado"
-      ? coordinates
-      : {
-          name: data?.name ?? "teste",
-          latitude: data?.latitude ?? 0,
-          longitude: data?.longitude ?? 0,
-          timeZone: data?.timeZone ?? "teste",
-          state: data?.state ?? "teste",
-          country: data?.country ?? "teste",
-        };
-  if (isError) return <p>Erro: {error.message}</p>;
+  const {
+    data: geoData,
+    isError,
+    error,
+  } = useQuery({
+    queryKey: ["geocodingLocation", location],
+    queryFn: () => getGeocoding(location),
+    enabled: !!location,
+    initialData: defaultGeoData,
+  });
 
   return (
     <div className="flex flex-col gap-2 px-10 py-12">
       <h1 className="text-3xl font-extrabold text-center p-4">Painel Climático</h1>
       <p>Procure uma cidade abaixo ou selecione pelo mapa:</p>
       <div className="flex flex-wrap justify-center gap-10">
-        <LocationPicker />
-        <Suspense fallback={<InteractiveMapSkeleton />}>
-          <InteractiveMap geocodingResults={geocodingResults} />
-        </Suspense>
+        <LocationPicker setLocation={setLocation} />
+
+        <InteractiveMap />
       </div>
 
       <Separator className="my-2" />
 
-      <ForecastCards geocodingResults={geocodingResults} />
+      <ForecastCards geoData={geoData} />
     </div>
   );
 }

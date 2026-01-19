@@ -1,23 +1,23 @@
+import { useContext } from "react";
 import { useSuspenseQuery } from "@tanstack/react-query";
+import ContextData from "../context/ContextData";
+import { getWeatherForecastByCoords } from "@/api/open-meteo";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { formatDateTime } from "@/utils/dateFormatter";
 import { weatherEmojiUnicode } from "@/utils/weatherIcons";
 import { WiRaindrop } from "react-icons/wi";
-import { getWeatherForecastByCoords } from "@/api/open-meteo";
 
-type Props = {
-  geocodingResults: Geocoding;
-};
-
-export default function HourlyCards({ geocodingResults }: Props) {
+export default function HourlyCards() {
+  const context = useContext(ContextData);
+  const { coordinates } = context;
   const {
     data: Forecast,
     isError,
     error,
   } = useSuspenseQuery({
-    queryKey: ["cityCoords", geocodingResults],
-    queryFn: () => getWeatherForecastByCoords(geocodingResults),
+    queryKey: ["cityCoords", coordinates],
+    queryFn: () => getWeatherForecastByCoords(coordinates),
   });
   if (isError) return <p>Erro: {error.message}</p>;
   return (

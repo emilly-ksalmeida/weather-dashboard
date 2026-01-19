@@ -1,40 +1,44 @@
 import { useEffect, useContext } from "react";
+import ContextData from "../context/ContextData.ts";
 import { MapContainer, Marker, useMap } from "react-leaflet";
 import { MaptilerLayer } from "@maptiler/leaflet-maptilersdk";
 import "leaflet/dist/leaflet.css";
-import ContextData from "../context/ContextData.ts";
-import type { Geocoding } from "../../utils/types.ts";
 
-type Props = {
-  geocodingResults: Geocoding;
-};
-
-export default function InteractiveMap({ geocodingResults }: Props) {
+export default function InteractiveMap() {
   const context = useContext(ContextData);
-  const { onMapClick } = context;
+  const { coordinates } = context;
+
   return (
     <MapContainer
-      key={`${geocodingResults.latitude},${geocodingResults.longitude}`}
-      center={[geocodingResults.latitude, geocodingResults.longitude]}
+      key={`${coordinates.latitude},${coordinates.longitude}`}
+      center={[coordinates.latitude, coordinates.longitude]}
       zoom={12}
       style={{ width: "500px", height: "400px" }}
     >
-      <MapClick onMapClick={onMapClick} geocodingResults={geocodingResults} />
+      <MapClick />
       <MapStyle />
-      <Marker position={[geocodingResults.latitude, geocodingResults.longitude]} />
+      <Marker position={[coordinates.latitude, coordinates.longitude]} />
     </MapContainer>
   );
 }
 
-function MapClick({
-  onMapClick,
-  geocodingResults,
-}: {
-  onMapClick: (latitude: number, longitude: number) => void;
-  geocodingResults: Geocoding;
-}) {
+function MapClick() {
+  const context = useContext(ContextData);
+  const { coordinates, setCoordinates } = context;
+
+  const onMapClick = (latitude: number, longitude: number) => {
+    setCoordinates({
+      name: "Local escolhido no mapa",
+      latitude: latitude,
+      longitude: longitude,
+      timeZone: "--",
+      state: "--",
+      country: "--",
+    });
+  };
+
   const map = useMap();
-  map.panTo([geocodingResults.latitude, geocodingResults.longitude]);
+  map.panTo([coordinates.latitude, coordinates.longitude]);
   map.on("click", e => {
     const { lat: eventLat, lng: eventLng } = e.latlng;
     onMapClick(eventLat, eventLng);

@@ -1,33 +1,46 @@
-import { skipToken, useQuery } from "@tanstack/react-query";
-import { getWeatherForecastByCoords } from "../../api/open-meteo.ts";
+import { Suspense, useContext } from "react";
+import { useQuery } from "@tanstack/react-query";
+import ContextData from "../context/ContextData.ts";
+import { getAirQualityByCoords, getWeatherForecastByCoords } from "../../api/open-meteo.ts";
 import { Separator } from "@radix-ui/react-separator";
 import CurrentCard from "../currentCard/CurrentCard.tsx";
 import AirQuality from "../airQuality/AirQuality.tsx";
 import HourlyCards from "../hourlyCards/HourlyCards.tsx";
 import DailyCard from "../dailyCard/DailyCard.tsx";
+
+// import CurrentCardSkeleton from "../skeletons/CurrentCardSkeleton.tsx";
+// import HourlyCardsSkeleton from "../skeletons/HourlyCardsSkeleton.tsx";
+// import DailyCardsSkeleton from "../skeletons/DailyCardsSkeleton.tsx";
 import type { Geocoding } from "@/utils/types.ts";
 
-import { Suspense } from "react";
-import CurrentCardSkeleton from "../skeletons/CurrentCardSkeleton.tsx";
-
-import HourlyCardsSkeleton from "../skeletons/HourlyCardsSkeleton.tsx";
-import DailyCardsSkeleton from "../skeletons/DailyCardsSkeleton.tsx";
-
 type Props = {
-  geocodingResults: Geocoding;
+  geoData: Geocoding;
 };
-export default function ForecastCards({ geocodingResults }: Props) {
+
+export default function ForecastCards({ geoData }: Props) {
+  const context = useContext(ContextData);
+  const { coordinates } = context;
+
+  const coordsSearch = coordinates.name === "Local escolhido no mapa" ? coordinates : geoData;
+
   const {
     data: Forecast,
     isError,
     error,
   } = useQuery({
-    queryKey: ["cityCoords", geocodingResults],
-    queryFn:
-      geocodingResults.name === "teste"
-        ? skipToken
-        : () => getWeatherForecastByCoords(geocodingResults),
-    enabled: !!geocodingResults,
+    queryKey: ["cityCoords", coordsSearch],
+    queryFn: () => getWeatherForecastByCoords(coordsSearch),
+    enabled: !!coordsSearch,
+  });
+
+  const { data: air } = useQuery({
+    queryKey: ["airQuality", coordsSearch],
+    queryFn: () =>
+      getAirQualityByCoords({
+        latitude: coordsSearch.latitude,
+        longitude: coordsSearch.longitude,
+      }),
+    enabled: !!coordsSearch,
   });
 
   if (isError) return <p>Erro: {error.message}</p>;
@@ -35,22 +48,18 @@ export default function ForecastCards({ geocodingResults }: Props) {
   return (
     <div className="flex flex-col justify-center items-center">
       <div className="flex flex-wrap justify-center gap-10">
-        <Suspense fallback={<CurrentCardSkeleton />}>
-          <CurrentCard geocodingResults={geocodingResults} />
-        </Suspense>
+        <CurrentCard coordsSearch={coordsSearch} />
 
-        <AirQuality geocodingResults={geocodingResults} />
+        <AirQuality coordsSearch={coordsSearch} />
       </div>
 
       <Separator className="my-2" />
-      <Suspense fallback={<HourlyCardsSkeleton />}>
-        <HourlyCards geocodingResults={geocodingResults} />
-      </Suspense>
+
+      <HourlyCards />
 
       <Separator className="my-2" />
-      <Suspense fallback={<DailyCardsSkeleton />}>
-        <DailyCard geocodingResults={geocodingResults} />
-      </Suspense>
+
+      <DailyCard />
     </div>
   );
 }

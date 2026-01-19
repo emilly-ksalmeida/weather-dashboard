@@ -9,7 +9,7 @@ export const LocationPickerSchema = z.object({
     .nonempty("Nome de Usuário é obrigatório.")
     .regex(/^[A-Za-zÀ-ÖØ-öø-ÿ\s]+$/, "Nome deve conter apenas letras e espaços.")
     .refine(name => name.trim().length > 0, "Nome não pode conter apenas espaços."),
-  state: z.string().optional(),
+  state: z.string(),
   country: z
     .string({
       error: "Este campo é obrigatório",
