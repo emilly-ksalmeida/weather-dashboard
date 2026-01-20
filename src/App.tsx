@@ -8,7 +8,7 @@ import { getGeocoding } from "./api/open-meteo.ts";
 import { useQuery } from "@tanstack/react-query";
 
 const defaultGeoData: Geocoding = {
-  name: "Brasília",
+  name: "InitialData - Brasília",
   latitude: -15.78,
   longitude: -47.92,
   timeZone: "--",
@@ -29,8 +29,8 @@ function App() {
   } = useQuery({
     queryKey: ["geocodingLocation", location],
     queryFn: () => getGeocoding(location),
-    enabled: !!location,
     initialData: defaultGeoData,
+    enabled: !!location,
   });
 
   return (

@@ -55,11 +55,11 @@ export default function ForecastCards({ geoData }: Props) {
 
       <Separator className="my-2" />
 
-      <HourlyCards />
+      <HourlyCards coordsSearch={coordsSearch} />
 
       <Separator className="my-2" />
 
-      <DailyCard />
+      <DailyCard coordsSearch={coordsSearch} />
     </div>
   );
 }

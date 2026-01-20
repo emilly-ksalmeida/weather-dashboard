@@ -81,7 +81,6 @@ export default function LocationPicker({ setLocation }: Props) {
   );
 
   function search(data: LocationPickerSearch) {
-    console.log("Fazer setLocation", data);
     setLocation(data);
   }
 

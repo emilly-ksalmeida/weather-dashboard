@@ -1,6 +1,6 @@
-import { useContext } from "react";
+// import { useContext } from "react";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import ContextData from "../context/ContextData";
+// import ContextData from "../context/ContextData";
 import { getWeatherForecastByCoords } from "@/api/open-meteo";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -14,17 +14,20 @@ import { formatDate } from "@/utils/dateFormatter";
 import { weatherEmojiUnicode } from "@/utils/weatherIcons";
 import { WiThermometer } from "react-icons/wi";
 import { IoIosArrowRoundDown, IoIosArrowRoundUp } from "react-icons/io";
+import type { Geocoding } from "@/utils/types";
 
-export default function DailyCard() {
-  const context = useContext(ContextData);
-  const { coordinates } = context;
+type Props = {
+  coordsSearch: Geocoding;
+};
+
+export default function DailyCard({ coordsSearch }: Props) {
   const {
     data: Forecast,
     isError,
     error,
   } = useSuspenseQuery({
-    queryKey: ["cityCoords", coordinates],
-    queryFn: () => getWeatherForecastByCoords(coordinates),
+    queryKey: ["cityCoords", coordsSearch],
+    queryFn: () => getWeatherForecastByCoords(coordsSearch),
   });
   if (isError) return <p>Erro: {error.message}</p>;
   return (
