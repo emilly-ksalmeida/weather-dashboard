@@ -7,14 +7,7 @@ interface IWeatherProviderProp {
 }
 
 export default function WeatherProvider({ children }: IWeatherProviderProp) {
-  const [coordinates, setCoordinates] = useState<Geocoding>({
-    name: "Brasília",
-    latitude: -15.78,
-    longitude: -47.92,
-    timeZone: "--",
-    state: "Federal District",
-    country: "BR",
-  });
+  const [coordinates, setCoordinates] = useState<Geocoding | null>(null);
 
   return (
     <ContextData.Provider value={{ coordinates, setCoordinates }}>{children}</ContextData.Provider>

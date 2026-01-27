@@ -1,27 +1,24 @@
-import { Suspense, useContext } from "react";
+import { Suspense } from "react";
 import { useQuery } from "@tanstack/react-query";
-import ContextData from "../context/ContextData.ts";
 import { getAirQualityByCoords, getWeatherForecastByCoords } from "../../api/open-meteo.ts";
 import { Separator } from "@radix-ui/react-separator";
 import CurrentCard from "../currentCard/CurrentCard.tsx";
 import AirQuality from "../airQuality/AirQuality.tsx";
 import HourlyCards from "../hourlyCards/HourlyCards.tsx";
 import DailyCard from "../dailyCard/DailyCard.tsx";
-
-// import CurrentCardSkeleton from "../skeletons/CurrentCardSkeleton.tsx";
-// import HourlyCardsSkeleton from "../skeletons/HourlyCardsSkeleton.tsx";
-// import DailyCardsSkeleton from "../skeletons/DailyCardsSkeleton.tsx";
+import CurrentCardSkeleton from "../skeletons/CurrentCardSkeleton.tsx";
+import HourlyCardsSkeleton from "../skeletons/HourlyCardsSkeleton.tsx";
+import DailyCardsSkeleton from "../skeletons/DailyCardsSkeleton.tsx";
 import type { Geocoding } from "@/utils/types.ts";
+
 
 type Props = {
   geoData: Geocoding;
+  coordinates: Geocoding | null;
 };
 
-export default function ForecastCards({ geoData }: Props) {
-  const context = useContext(ContextData);
-  const { coordinates } = context;
-
-  const coordsSearch = coordinates.name === "Local escolhido no mapa" ? coordinates : geoData;
+export default function ForecastCards({ geoData, coordinates }: Props) {
+  const coordsSearch = coordinates?.name === "Local escolhido no mapa" ? coordinates : geoData;
 
   const {
     data: Forecast,
@@ -48,18 +45,23 @@ export default function ForecastCards({ geoData }: Props) {
   return (
     <div className="flex flex-col justify-center items-center">
       <div className="flex flex-wrap justify-center gap-10">
-        <CurrentCard coordsSearch={coordsSearch} />
+        <Suspense fallback={<CurrentCardSkeleton />}>
+          <CurrentCard coordsSearch={coordsSearch} />
+        </Suspense>
 
         <AirQuality coordsSearch={coordsSearch} />
       </div>
 
       <Separator className="my-2" />
 
-      <HourlyCards coordsSearch={coordsSearch} />
+      <Suspense fallback={<HourlyCardsSkeleton />}>
+        <HourlyCards coordsSearch={coordsSearch} />
+      </Suspense>
 
       <Separator className="my-2" />
-
-      <DailyCard coordsSearch={coordsSearch} />
+      <Suspense fallback={<DailyCardsSkeleton />}>
+        <DailyCard coordsSearch={coordsSearch} />
+      </Suspense>
     </div>
   );
 }

@@ -42,19 +42,20 @@ export async function getGeocoding(locationSearch: Location): Promise<Geocoding>
   let dataGeo;
 
   if (countryCode === "BR") {
-    dataGeo = data.results
-      .filter((result: FetchGeocoding) => result.admin1 === stateSearch)
-      .map((citySeleted: FetchGeocoding) => {
-        const city = {
-          name: citySeleted.name,
-          latitude: citySeleted.latitude,
-          longitude: citySeleted.longitude,
-          timeZone: citySeleted.timezone,
-          state: citySeleted.admin1,
-          country: citySeleted.country,
-        };
-        return city;
-      })[0];
+    dataGeo =
+      data.results
+        .filter((result: FetchGeocoding) => result.admin1 === stateSearch)
+        .map((citySeleted: FetchGeocoding) => {
+          const city = {
+            name: citySeleted.name,
+            latitude: citySeleted.latitude,
+            longitude: citySeleted.longitude,
+            timeZone: citySeleted.timezone,
+            state: citySeleted.admin1,
+            country: citySeleted.country,
+          };
+          return city;
+        })[0] || [];
   } else {
     dataGeo = data.results.map((result: FetchGeocoding) => {
       const city = {

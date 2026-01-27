@@ -1,31 +1,31 @@
 import { useEffect, useContext } from "react";
-import ContextData from "../context/ContextData.ts";
+// import ContextData from "../context/ContextData.ts";
 import { MapContainer, Marker, useMap } from "react-leaflet";
 import { MaptilerLayer } from "@maptiler/leaflet-maptilersdk";
 import "leaflet/dist/leaflet.css";
+import type { Geocoding } from "@/utils/types";
 
-export default function InteractiveMap() {
-  const context = useContext(ContextData);
-  const { coordinates } = context;
+type Props = {
+  coordinates: Geocoding | null;
+  setCoordinates: React.Dispatch<React.SetStateAction<Geocoding>>;
+};
 
+export default function InteractiveMap({ coordinates, setCoordinates }: Props) {
   return (
     <MapContainer
-      key={`${coordinates.latitude},${coordinates.longitude}`}
-      center={[coordinates.latitude, coordinates.longitude]}
+      key={`${coordinates?.latitude},${coordinates?.longitude}`}
+      center={[coordinates?.latitude ?? 0, coordinates?.longitude ?? 0]}
       zoom={12}
       style={{ width: "500px", height: "400px" }}
     >
-      <MapClick />
+      <MapClick coordinates={coordinates} setCoordinates={setCoordinates} />
       <MapStyle />
-      <Marker position={[coordinates.latitude, coordinates.longitude]} />
+      <Marker position={[coordinates?.latitude ?? 0, coordinates?.longitude ?? 0]} />
     </MapContainer>
   );
 }
 
-function MapClick() {
-  const context = useContext(ContextData);
-  const { coordinates, setCoordinates } = context;
-
+function MapClick({ coordinates, setCoordinates }: Props) {
   const onMapClick = (latitude: number, longitude: number) => {
     setCoordinates({
       name: "Local escolhido no mapa",
@@ -38,7 +38,7 @@ function MapClick() {
   };
 
   const map = useMap();
-  map.panTo([coordinates.latitude, coordinates.longitude]);
+  map.panTo([coordinates?.latitude ?? 0, coordinates?.longitude ?? 0]);
   map.on("click", e => {
     const { lat: eventLat, lng: eventLng } = e.latlng;
     onMapClick(eventLat, eventLng);

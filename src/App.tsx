@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Separator } from "@/components/ui/separator";
 import LocationPicker from "./components/locationPicker/LocationPicker.tsx";
 import InteractiveMap from "./components/map/InteractiveMap.tsx";
@@ -7,21 +7,24 @@ import type { Geocoding, Location } from "@/utils/types.ts";
 import { getGeocoding } from "./api/open-meteo.ts";
 import { useQuery } from "@tanstack/react-query";
 
-const defaultGeoData: Geocoding = {
-  name: "InitialData - Brasília",
-  latitude: -15.78,
-  longitude: -47.92,
-  timeZone: "--",
-  state: "Federal District",
-  country: "BR",
-};
-
 function App() {
+  console.log("renderizando <App>");
   const [location, setLocation] = useState<Location>({
     cityName: "Brasília",
     state: "Federal District",
     country: "BR",
   });
+
+  const [coordinates, setCoordinates] = useState<Geocoding>({
+    name: "Default - Brasília",
+    latitude: -15.78,
+    longitude: -47.92,
+    timeZone: "--",
+    state: "Federal District",
+    country: "BR",
+  });
+  //LER - https://tanstack.com/query/latest/docs/framework/react/guides/important-defaults
+  // Quando o erro (open-meteo.ts linha 76) é lançado, a query é repetida 3x
   const {
     data: geoData,
     isError,
@@ -29,23 +32,25 @@ function App() {
   } = useQuery({
     queryKey: ["geocodingLocation", location],
     queryFn: () => getGeocoding(location),
-    initialData: defaultGeoData,
     enabled: !!location,
   });
+
+  if (isError) return <p>Erro: {error.message}</p>;
 
   return (
     <div className="flex flex-col gap-2 px-10 py-12">
       <h1 className="text-3xl font-extrabold text-center p-4">Painel Climático</h1>
       <p>Procure uma cidade abaixo ou selecione pelo mapa:</p>
+
       <div className="flex flex-wrap justify-center gap-10">
         <LocationPicker setLocation={setLocation} />
 
-        <InteractiveMap />
+        <InteractiveMap coordinates={coordinates} setCoordinates={setCoordinates} />
       </div>
 
       <Separator className="my-2" />
 
-      <ForecastCards geoData={geoData} />
+      {geoData ? <ForecastCards geoData={geoData} coordinates={coordinates} /> : ""}
     </div>
   );
 }

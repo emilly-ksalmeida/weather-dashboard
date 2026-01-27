@@ -2,8 +2,8 @@ import { createContext } from "react";
 import type { Geocoding } from "@/utils/types";
 
 interface IProviderContextProps {
-  coordinates: Geocoding;
-  setCoordinates: React.Dispatch<React.SetStateAction<Geocoding>>;
+  coordinates: Geocoding | null;
+  setCoordinates: React.Dispatch<React.SetStateAction<Geocoding | null>>;
 }
 
 const ContextData = createContext<IProviderContextProps>({} as IProviderContextProps);

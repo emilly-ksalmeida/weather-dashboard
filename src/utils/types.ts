@@ -22,17 +22,17 @@ export interface ApiResponseGeocoding {
 }
 
 export type Geocoding = {
-  name: string;
-  latitude: number;
-  longitude: number;
-  timeZone: string;
-  state: string;
-  country: string;
+  name: string | null;
+  latitude: number | null;
+  longitude: number | null;
+  timeZone: string | null;
+  state: string | null;
+  country: string | null;
 };
 
 export type Coords = {
-  latitude: number;
-  longitude: number;
+  latitude: number | null;
+  longitude: number | null;
 };
 
 export type Location = {
