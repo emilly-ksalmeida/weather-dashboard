@@ -1,33 +1,37 @@
+import { Suspense, useContext } from "react";
 import { skipToken, useQuery } from "@tanstack/react-query";
+import ContextData from "../context/ContextData.ts";
 import { getWeatherForecastByCoords } from "../../api/open-meteo.ts";
 import { Separator } from "@radix-ui/react-separator";
 import CurrentCard from "../currentCard/CurrentCard.tsx";
 import AirQuality from "../airQuality/AirQuality.tsx";
 import HourlyCards from "../hourlyCards/HourlyCards.tsx";
 import DailyCard from "../dailyCard/DailyCard.tsx";
-import type { Geocoding } from "@/utils/types.ts";
-
-import { Suspense } from "react";
 import CurrentCardSkeleton from "../skeletons/CurrentCardSkeleton.tsx";
-
 import HourlyCardsSkeleton from "../skeletons/HourlyCardsSkeleton.tsx";
 import DailyCardsSkeleton from "../skeletons/DailyCardsSkeleton.tsx";
 
-type Props = {
-  geocodingResults: Geocoding;
-};
-export default function ForecastCards({ geocodingResults }: Props) {
+export default function ForecastCards() {
+  const context = useContext(ContextData);
+  const { coordinates } = context;
+  /**
+ *  const { data, isError, error } = useQuery({
+    queryKey: ["geocodingLocation", location],
+    queryFn:
+      location.cityName === "Customizado" || location.cityName === ""
+        ? skipToken
+        : () => getGeocoding(location),
+    enabled: !!location,
+  });
+ */
   const {
     data: Forecast,
     isError,
     error,
   } = useQuery({
-    queryKey: ["cityCoords", geocodingResults],
-    queryFn:
-      geocodingResults.name === "teste"
-        ? skipToken
-        : () => getWeatherForecastByCoords(geocodingResults),
-    enabled: !!geocodingResults,
+    queryKey: ["cityCoords", coordinates],
+    queryFn: () => getWeatherForecastByCoords(coordinates),
+     enabled: !!coordinates,
   });
 
   if (isError) return <p>Erro: {error.message}</p>;
@@ -36,20 +40,20 @@ export default function ForecastCards({ geocodingResults }: Props) {
     <div className="flex flex-col justify-center items-center">
       <div className="flex flex-wrap justify-center gap-10">
         <Suspense fallback={<CurrentCardSkeleton />}>
-          <CurrentCard geocodingResults={geocodingResults} />
+          <CurrentCard />
         </Suspense>
 
-        <AirQuality geocodingResults={geocodingResults} />
+        {/* <AirQuality geocodingResults={geocodingResults} /> */}
       </div>
 
       <Separator className="my-2" />
       <Suspense fallback={<HourlyCardsSkeleton />}>
-        <HourlyCards geocodingResults={geocodingResults} />
+        <HourlyCards />
       </Suspense>
 
       <Separator className="my-2" />
       <Suspense fallback={<DailyCardsSkeleton />}>
-        <DailyCard geocodingResults={geocodingResults} />
+        <DailyCard />
       </Suspense>
     </div>
   );

@@ -1,28 +1,33 @@
+import { useContext } from "react";
 import { useSuspenseQuery } from "@tanstack/react-query";
+import ContextData from "../context/ContextData.ts";
+import { getWeatherForecastByCoords } from "@/api/open-meteo.ts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { weatherEmojiUnicode } from "../../utils/weatherIcons.ts";
 import { formatDateTime } from "../../utils/dateFormatter.ts";
 import { WiStrongWind, WiRaindrop, WiHumidity, WiThermometer } from "react-icons/wi";
-import { getWeatherForecastByCoords } from "@/api/open-meteo.ts";
 
-type Props = {
-  geocodingResults: Geocoding;
-};
+export default function CurrentCard() {
+  const context = useContext(ContextData);
+  const { coordinates } = context;
 
-export default function CurrentCard({ geocodingResults }: Props) {
   const {
     data: Forecast,
     isError,
     error,
   } = useSuspenseQuery({
-    queryKey: ["cityCoords", geocodingResults],
-    queryFn: () => getWeatherForecastByCoords(geocodingResults),
+    queryKey: ["cityCoords", coordinates],
+    queryFn: () => getWeatherForecastByCoords(coordinates),
   });
   if (isError) return <p>Erro: {error.message}</p>;
   return (
     <Card className="w-74">
       <CardHeader>
-        <CardTitle>{Forecast.cityDataGeo.name}</CardTitle>
+        <CardTitle>
+          {Forecast.cityDataGeo.name === "Local escolhido no mapa"
+            ? `latitude: ${Forecast.cityDataGeo.lat} latitude: ${Forecast.cityDataGeo.long}`
+            : Forecast.cityDataGeo.name}
+        </CardTitle>
       </CardHeader>
       <CardContent className="flex flex-col gap-4 justify-center items-center">
         <p className="text-5xl">
