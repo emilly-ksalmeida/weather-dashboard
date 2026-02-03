@@ -1,5 +1,5 @@
 import { Suspense, useContext } from "react";
-import { skipToken, useQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import ContextData from "../context/ContextData.ts";
 import { getWeatherForecastByCoords } from "../../api/open-meteo.ts";
 import { Separator } from "@radix-ui/react-separator";
@@ -14,16 +14,6 @@ import DailyCardsSkeleton from "../skeletons/DailyCardsSkeleton.tsx";
 export default function ForecastCards() {
   const context = useContext(ContextData);
   const { coordinates } = context;
-  /**
- *  const { data, isError, error } = useQuery({
-    queryKey: ["geocodingLocation", location],
-    queryFn:
-      location.cityName === "Customizado" || location.cityName === ""
-        ? skipToken
-        : () => getGeocoding(location),
-    enabled: !!location,
-  });
- */
   const {
     data: Forecast,
     isError,
@@ -31,7 +21,7 @@ export default function ForecastCards() {
   } = useQuery({
     queryKey: ["cityCoords", coordinates],
     queryFn: () => getWeatherForecastByCoords(coordinates),
-     enabled: !!coordinates,
+    enabled: !!coordinates,
   });
 
   if (isError) return <p>Erro: {error.message}</p>;
