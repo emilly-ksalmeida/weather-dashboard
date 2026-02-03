@@ -5,39 +5,43 @@ import "leaflet/dist/leaflet.css";
 import ContextData from "../context/ContextData.ts";
 import type { Geocoding } from "../../utils/types.ts";
 
-type Props = {
-  geocodingResults: Geocoding;
-};
-
-export default function InteractiveMap({ geocodingResults }: Props) {
+export default function InteractiveMap() {
   const context = useContext(ContextData);
-  const { onMapClick } = context;
+  const { coordinates, setCoordinates } = context;
   return (
     <MapContainer
-      key={`${geocodingResults.latitude},${geocodingResults.longitude}`}
-      center={[geocodingResults.latitude, geocodingResults.longitude]}
+      key={`${coordinates.latitude},${coordinates.longitude}`}
+      center={[coordinates.latitude, coordinates.longitude]}
       zoom={12}
       style={{ width: "500px", height: "400px" }}
     >
-      <MapClick onMapClick={onMapClick} geocodingResults={geocodingResults} />
+      <MapClick coordinates={coordinates} setCoordinates={setCoordinates} />
       <MapStyle />
-      <Marker position={[geocodingResults.latitude, geocodingResults.longitude]} />
+      <Marker position={[coordinates.latitude, coordinates.longitude]} />
     </MapContainer>
   );
 }
 
 function MapClick({
-  onMapClick,
-  geocodingResults,
+  coordinates,
+  setCoordinates,
 }: {
-  onMapClick: (latitude: number, longitude: number) => void;
-  geocodingResults: Geocoding;
+  coordinates: Geocoding;
+  setCoordinates: React.Dispatch<React.SetStateAction<Geocoding>>;
 }) {
   const map = useMap();
-  map.panTo([geocodingResults.latitude, geocodingResults.longitude]);
+  map.panTo([coordinates.latitude, coordinates.longitude]);
   map.on("click", e => {
     const { lat: eventLat, lng: eventLng } = e.latlng;
-    onMapClick(eventLat, eventLng);
+    // onMapClick(eventLat, eventLng);
+    setCoordinates({
+      name: "Local escolhido no mapa",
+      latitude: eventLat,
+      longitude: eventLng,
+      timeZone: "--",
+      state: "--",
+      country: "--",
+    });
   });
   return null;
 }
