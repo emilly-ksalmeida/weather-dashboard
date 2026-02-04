@@ -30,11 +30,6 @@ export type Geocoding = {
   country: string;
 };
 
-export type Coords = {
-  latitude: number;
-  longitude: number;
-};
-
 export type Location = {
   cityName: string;
   state?: string;

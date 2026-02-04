@@ -40,7 +40,7 @@ function MapClick({
       longitude: eventLng,
       timeZone: "--",
       state: "--",
-      country: "--",
+      country: "Local escolhido no mapa",
     });
   });
   return null;
