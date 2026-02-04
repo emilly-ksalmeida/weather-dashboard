@@ -1,8 +1,11 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { useQuery } from "@tanstack/react-query";
 import * as z from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 import ContextData from "../context/ContextData.ts";
+import ptLocale from "i18n-iso-countries/langs/pt.json";
+import countries from "i18n-iso-countries";
 import {
   Field,
   FieldContent,
@@ -20,9 +23,6 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Input } from "../ui/input";
-import { useState } from "react";
-import ptLocale from "i18n-iso-countries/langs/pt.json";
-import countries from "i18n-iso-countries";
 import { LuChevronsUpDown, LuCheck } from "react-icons/lu";
 import { FaSearchLocation } from "react-icons/fa";
 import { cn } from "@/lib/utils";
@@ -37,6 +37,8 @@ import {
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { LocationPickerSchema } from "../../schemas/localizationSchema.ts";
 import locationsBR from "../../assets/listStates.ts";
+import type { Location } from "@/utils/types.ts";
+import { getGeocoding } from "@/api/open-meteo.ts";
 
 countries.registerLocale(ptLocale);
 
@@ -51,7 +53,17 @@ type LocationPickerSearch = z.infer<typeof LocationPickerSchema>;
 
 export default function LocationPicker() {
   const context = useContext(ContextData);
-  const { setLocation } = context;
+  const { setCoordinates } = context;
+
+  const [locationForm, setLocationForm] = useState<Location>({
+    cityName: "Brasília",
+    state: "Federal District",
+    country: "BR",
+  });
+
+  const [open, setOpen] = useState(false);
+  const [selectedCode, setSelectedCode] = useState("");
+  const [inputValue, setInputValue] = useState("");
 
   const {
     control,
@@ -64,9 +76,20 @@ export default function LocationPicker() {
     mode: "onChange",
   });
 
-  const [open, setOpen] = useState(false);
-  const [selectedCode, setSelectedCode] = useState("");
-  const [inputValue, setInputValue] = useState("");
+  const {
+    data: geoLocation,
+    isError,
+    error,
+  } = useQuery({
+    queryKey: ["geocodingLocation", locationForm],
+    queryFn: async () => {
+      const data = await getGeocoding(locationForm);
+      setCoordinates(data);
+      return data;
+    },
+    enabled: !!locationForm,
+  });
+
   const exactMatch = countriesList.find(
     item => item.label.toLowerCase() === inputValue.toLowerCase()
   );
@@ -75,8 +98,10 @@ export default function LocationPicker() {
   );
 
   function search(data: LocationPickerSearch) {
-    setLocation(data);
+    setLocationForm(data);
   }
+
+  if (isError) return <p>Erro: {error.message}</p>;
 
   return (
     <div className="flex flex-col justify-center items-center">
@@ -208,10 +233,10 @@ export default function LocationPicker() {
         </FieldGroup>
       </form>
       <Field orientation="horizontal" className="flex flex-row justify-center">
-        <Button type="button" variant="outline" onClick={() => reset()}>
+        <Button type="button" variant="outline" className="cursor-pointer" onClick={() => reset()}>
           Reiniciar
         </Button>
-        <Button type="submit" form="form-location-picker">
+        <Button type="submit" form="form-location-picker" className="cursor-pointer">
           Pesquisar
           <FaSearchLocation />
         </Button>
