@@ -1,7 +1,7 @@
 import { Suspense, useContext } from "react";
 import { useQuery } from "@tanstack/react-query";
 import ContextData from "../context/ContextData.ts";
-import { getWeatherForecastByCoords } from "../../api/open-meteo.ts";
+import { getForecast } from "../../api/open-meteo.ts";
 import { Separator } from "@radix-ui/react-separator";
 import CurrentCard from "../currentCard/CurrentCard.tsx";
 import AirQuality from "../airQuality/AirQuality.tsx";
@@ -10,6 +10,7 @@ import DailyCard from "../dailyCard/DailyCard.tsx";
 import CurrentCardSkeleton from "../skeletons/CurrentCardSkeleton.tsx";
 import HourlyCardsSkeleton from "../skeletons/HourlyCardsSkeleton.tsx";
 import DailyCardsSkeleton from "../skeletons/DailyCardsSkeleton.tsx";
+import AirQualitySkeleton from "../skeletons/AirQualitySkeleton.tsx";
 
 export default function ForecastCards() {
   const context = useContext(ContextData);
@@ -20,7 +21,7 @@ export default function ForecastCards() {
     error,
   } = useQuery({
     queryKey: ["cityCoords", coordinates],
-    queryFn: () => getWeatherForecastByCoords(coordinates),
+    queryFn: () => getForecast(coordinates),
     enabled: !!coordinates,
   });
 
@@ -32,8 +33,9 @@ export default function ForecastCards() {
         <Suspense fallback={<CurrentCardSkeleton />}>
           <CurrentCard />
         </Suspense>
-
-        {/* <AirQuality geocodingResults={geocodingResults} /> */}
+        <Suspense fallback={<AirQualitySkeleton />}>
+          <AirQuality />
+        </Suspense>
       </div>
 
       <Separator className="my-2" />
